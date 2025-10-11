@@ -1,0 +1,35 @@
+{
+  "name": "clone-tabnews",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Implementação do https://www.tabnews.com.br feita no https://curso.dev/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MatheusKerscher/clone-tabnews.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MatheusKerscher/clone-tabnews/issues"
+  },
+  "homepage": "https://github.com/MatheusKerscher/clone-tabnews#readme",
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build --turbopack",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "next": "15.5.4"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.4",
+    "@eslint/eslintrc": "^3"
+  }
+}

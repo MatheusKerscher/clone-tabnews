@@ -18,7 +18,9 @@
     "start": "next start",
     "lint": "eslint",
     "lint:check": "prettier --check .",
-    "lint:fix": "prettier --write ."
+    "lint:fix": "prettier --write .",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "next": "15.5.4",
@@ -32,6 +34,7 @@
     "@types/react-dom": "19",
     "eslint": "9",
     "eslint-config-next": "15.5.4",
+    "jest": "^30.2.0",
     "prettier": "3.6.2",
     "typescript": "5"
   }

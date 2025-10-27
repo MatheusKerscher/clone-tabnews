@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "license": "MIT",
+  "type": "module",
   "description": "Implementação do https://www.tabnews.com.br feita no https://curso.dev/",
   "repository": {
     "type": "git",
@@ -23,10 +24,14 @@
     "lint:check": "prettier --check .",
     "lint:fix": "prettier --write .",
     "test": "jest",
-    "test:watch": "jest --watchAll"
+    "test:watch": "jest --watchAll",
+    "migration:create": "node-pg-migrate create -m infra/migrations",
+    "migration:up": "node-pg-migrate -m infra/migrations --envPath .env.development up"
   },
   "dependencies": {
+    "dotenv": "17.2.3",
     "next": "15.5.4",
+    "node-pg-migrate": "8.0.3",
     "pg": "8.16.3",
     "react": "19.1.0",
     "react-dom": "19.1.0"

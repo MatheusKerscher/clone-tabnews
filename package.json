@@ -23,13 +23,14 @@
     "lint": "eslint",
     "lint:check": "prettier --check .",
     "lint:fix": "prettier --write .",
-    "test": "jest",
-    "test:watch": "jest --watchAll",
+    "test": "jest -i",
+    "test:watch": "jest -i --watchAll",
     "migration:create": "node-pg-migrate create -m infra/migrations",
     "migration:up": "node-pg-migrate -m infra/migrations --envPath .env.development up"
   },
   "dependencies": {
     "dotenv": "17.2.3",
+    "dotenv-expand": "12.0.3",
     "next": "15.5.4",
     "node-pg-migrate": "8.0.3",
     "pg": "8.16.3",

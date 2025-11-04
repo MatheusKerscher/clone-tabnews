@@ -10,38 +10,49 @@ export default async function migrations(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const client = await database.getNewClient();
+  const allowedMethods = ["GET", "POST"];
+  const currentMethod = req.method!;
 
-  const defaultMigrationOptions: RunnerOption = {
-    dbClient: client,
-    dryRun: true,
-    dir: join(cwd(), "infra", "migrations"),
-    direction: "up",
-    migrationsTable: "pgmigrations",
-    verbose: true,
-  };
-
-  if (req.method === "GET") {
-    const pendingMigrations = await migrationsRunner(defaultMigrationOptions);
-    await client.end();
-
-    return res.status(200).json(pendingMigrations);
+  if (!allowedMethods.includes(currentMethod)) {
+    return res.status(405).json({
+      message: `Method ${currentMethod} not allowed to this request!`,
+    });
   }
 
-  if (req.method === "POST") {
+  let client;
+
+  try {
+    client = await database.getNewClient();
+
+    const defaultMigrationOptions: RunnerOption = {
+      dbClient: client,
+      dryRun: true,
+      dir: join(cwd(), "infra", "migrations"),
+      direction: "up",
+      migrationsTable: "pgmigrations",
+      verbose: true,
+    };
+
+    if (currentMethod === "GET") {
+      const pendingMigrations = await migrationsRunner(defaultMigrationOptions);
+
+      return res.status(200).json(pendingMigrations);
+    }
+
     const migratedMigrations = await migrationsRunner({
       ...defaultMigrationOptions,
       dryRun: false,
     });
-
-    await client.end();
 
     if (migratedMigrations.length) {
       return res.status(201).json(migratedMigrations);
     }
 
     return res.status(200).json(migratedMigrations);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  } finally {
+    await client?.end();
   }
-
-  res.status(405).end();
 }

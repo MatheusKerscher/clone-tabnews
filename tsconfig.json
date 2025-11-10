@@ -34,7 +34,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "models/calculadora.js"
+    "models/calculadora.js",
+    "infra/scripts/wait-for-postgres.ts"
   ],
   "exclude": [
     "node_modules"

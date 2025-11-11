@@ -1,10 +1,11 @@
 import database from "infra/database";
 
-const resetDatabase = async () => {
-  await database.query("DROP SCHEMA public CASCADE; CREATE SCHEMA public;");
-};
+import orchestrator from "test/orchestrator.ts";
 
-beforeAll(resetDatabase);
+beforeAll(async () => {
+  await orchestrator.waitForAllServices();
+  await database.query("DROP SCHEMA public CASCADE; CREATE SCHEMA public;");
+});
 
 const runMigrationsByAPI = async () => {
   const response = await fetch("http://localhost:3000/api/v1/migrations", {

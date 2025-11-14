@@ -1,0 +1,16 @@
+name: Linting
+
+on: pull_request
+
+jobs:
+  prettier:
+    name: Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/jod
+
+      - run: npm ci
+      - run: npm run lint:prettier:check

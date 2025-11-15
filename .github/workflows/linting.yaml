@@ -24,4 +24,4 @@ jobs:
           node-version: lts/jod
 
       - run: npm ci
-      - run: bpm run lint:eslint:check
+      - run: npm run lint:eslint:check

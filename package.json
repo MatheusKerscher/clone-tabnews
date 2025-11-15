@@ -20,7 +20,7 @@
     "services:down": "docker compose -f infra/compose.yaml down",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint",
+    "lint:eslint:check": "eslint .",
     "lint:prettier:check": "prettier --check .",
     "lint:prettier:fix": "prettier --write .",
     "test": "npm run services:up && concurrently -k -n next,jest -s command-jest --hide next \"next dev --turbopack\" \"jest -i --verbose\"",
@@ -50,6 +50,8 @@
     "concurrently": "^9.2.1",
     "eslint": "9",
     "eslint-config-next": "15.5.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jest": "29.1.0",
     "jest": "30.2.0",
     "prettier": "3.6.2",
     "typescript": "5"

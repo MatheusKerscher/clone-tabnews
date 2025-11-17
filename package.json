@@ -40,6 +40,8 @@
     "react-dom": "19.1.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
     "@eslint/eslintrc": "3",
     "@types/async-retry": "^1.4.9",
     "@types/jest": "30.0.0",

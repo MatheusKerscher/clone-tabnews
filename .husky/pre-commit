@@ -1,0 +1,77 @@
+echo "🔍 Running a sensitive data leak check..."
+
+PATTERNS="
+# Palavras comuns
+password
+passwd
+senha
+secret
+api[_-]?key
+apikey
+auth[_-]?token
+access[_-]?token
+authorization
+bearer
+
+# Senhas em URL
+:\/\/.+:.+@ 
+
+# JWT
+eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9._-]*\.[A-Za-z0-9._-]*
+
+# Tokens longos tipo hash
+[A-Fa-f0-9]{32,}
+[A-Za-z0-9]{40,}
+
+# Base64 suspeito (comprida demais)
+[A-Za-z0-9+\/]{32,}={0,2}
+
+# Chaves privadas
+-----BEGIN[[:space:]]RSA[[:space:]]PRIVATE[[:space:]]KEY-----
+-----BEGIN[[:space:]]EC[[:space:]]PRIVATE[[:space:]]KEY-----
+-----BEGIN[[:space:]]PRIVATE[[:space:]]KEY-----
+-----BEGIN[[:space:]]OPENSSH[[:space:]]PRIVATE[[:space:]]KEY-----
+
+# Postgres connection strings
+postgres:\/\/
+
+# Cloudflare
+cf_api_key
+cf_api_token
+"
+
+# Pega arquivos em staging
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=AMR)
+
+# Se não tiver arquivos, sai
+[ -z "$STAGED_FILES" ] && exit 0
+
+SUSPECT=0
+
+for FILE in $STAGED_FILES; do
+  # Ignorar arquivos dentro da pasta .husky
+  case "$FILE" in
+    .husky/*)
+      continue;;
+  esac
+
+  # Ignorar binários
+  if file "$FILE" | grep -q "binary"; then
+    continue
+  fi
+
+  # Rodar a busca
+  if grep -EIn "$PATTERNS" "$FILE" >/dev/null 2>&1; then
+    echo "❌ Potential leak found in the file: $FILE"
+    SUSPECT=1
+  fi
+done
+
+# Bloqueia commit
+if [ $SUSPECT -eq 1 ]; then
+  echo "🚫 Commit BLOCKED for security reasons!"
+  exit 1
+fi
+
+echo "✔ No sensitive data found."
+exit 0

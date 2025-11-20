@@ -29,7 +29,8 @@
     "migration:up": "node-pg-migrate -m infra/migrations --envPath .env.development up",
     "wait-for-postgres": "node infra/scripts/wait-for-postgres.ts",
     "prepare": "husky",
-    "commit": "cz"
+    "commit": "cz",
+    "update-dependencies": "npx npm-check-updates -i"
   },
   "dependencies": {
     "async-retry": "1.3.3",

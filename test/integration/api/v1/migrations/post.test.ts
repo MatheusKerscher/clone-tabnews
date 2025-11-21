@@ -1,10 +1,8 @@
-import database from "infra/database";
-
 import orchestrator from "test/orchestrator.ts";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
-  await database.query("DROP SCHEMA public CASCADE; CREATE SCHEMA public;");
+  await orchestrator.clearDatabase();
 });
 
 const runMigrationsByAPI = async () => {
@@ -15,20 +13,28 @@ const runMigrationsByAPI = async () => {
   return response;
 };
 
-test("POST to /api/v1/migrations should return 200", async () => {
-  const response1 = await runMigrationsByAPI();
+describe("POST /api/v1/migrations", () => {
+  describe("Anonymous user", () => {
+    describe("Running pending migrations", () => {
+      test("For the first time", async () => {
+        const response1 = await runMigrationsByAPI();
 
-  expect(response1.status).toBe(201);
+        expect(response1.status).toBe(201);
 
-  const responseBody1 = await response1.json();
-  expect(Array.isArray(responseBody1)).toBe(true);
-  expect(responseBody1.length).toBeGreaterThanOrEqual(1);
+        const responseBody1 = await response1.json();
+        expect(Array.isArray(responseBody1)).toBe(true);
+        expect(responseBody1.length).toBeGreaterThanOrEqual(1);
+      });
 
-  const response2 = await runMigrationsByAPI();
+      test("For the second time", async () => {
+        const response2 = await runMigrationsByAPI();
 
-  expect(response2.status).toBe(200);
+        expect(response2.status).toBe(200);
 
-  const responseBody2 = await response2.json();
-  expect(Array.isArray(responseBody2)).toBe(true);
-  expect(responseBody2.length).toBe(0);
+        const responseBody2 = await response2.json();
+        expect(Array.isArray(responseBody2)).toBe(true);
+        expect(responseBody2.length).toBe(0);
+      });
+    });
+  });
 });

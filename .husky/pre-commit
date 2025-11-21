@@ -13,18 +13,8 @@ access[_-]?token
 authorization
 bearer
 
-# Senhas em URL
-:\/\/.+:.+@ 
-
 # JWT
 eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9._-]*\.[A-Za-z0-9._-]*
-
-# Tokens longos tipo hash
-[A-Fa-f0-9]{32,}
-[A-Za-z0-9]{40,}
-
-# Base64 suspeito (comprida demais)
-[A-Za-z0-9+\/]{32,}={0,2}
 
 # Chaves privadas
 -----BEGIN[[:space:]]RSA[[:space:]]PRIVATE[[:space:]]KEY-----

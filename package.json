@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/MatheusKerscher/clone-tabnews#readme",
   "scripts": {
-    "dev": "npm run services:up && npm run services:wait:database && npm run migrations:up && next dev --turbopack",
+    "dev": "node scripts/dev.js",
     "build": "next build --turbopack",
     "start": "next start",
     "test": "npm run services:up && concurrently -k -n next,jest -s command-jest --hide next \"next dev --turbopack\" \"jest -i --verbose\"",

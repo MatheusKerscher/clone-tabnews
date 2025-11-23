@@ -5,12 +5,27 @@ const fetchAPI = async (key: string) => {
   return response.json();
 };
 
-const HealthData = () => {
-  const { data, error, isLoading } = useSWR("/api/v1/status", fetchAPI, {
-    refreshInterval: 2000,
-  });
+type HealthDataProps = {
+  update_at: string;
+  dependencies: {
+    database: {
+      version: string;
+      max_connections: number;
+      opened_connections: number;
+    };
+  };
+};
 
-  if (error) {
+const HealthData = () => {
+  const { data, error, isLoading } = useSWR<HealthDataProps>(
+    "/api/v1/status",
+    fetchAPI,
+    {
+      refreshInterval: 2000,
+    },
+  );
+
+  if (error || !data) {
     return (
       <div>
         <h2>Não foi possível buscar as informações sobre a saúde do sistema</h2>

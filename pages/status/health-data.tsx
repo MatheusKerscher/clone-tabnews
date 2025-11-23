@@ -25,7 +25,7 @@ const HealthData = () => {
     },
   );
 
-  if (error || !data) {
+  if (error) {
     return (
       <div>
         <h2>Não foi possível buscar as informações sobre a saúde do sistema</h2>
@@ -38,7 +38,7 @@ const HealthData = () => {
       <p>
         Última atualização:{" "}
         <span>
-          {isLoading
+          {!data || isLoading
             ? "Carregando..."
             : new Date(data.update_at).toLocaleString("pt-BR")}
         </span>
@@ -47,7 +47,7 @@ const HealthData = () => {
       <div>
         <h2>Database</h2>
 
-        {isLoading ? (
+        {!data || isLoading ? (
           <span>Carregando...</span>
         ) : (
           <>

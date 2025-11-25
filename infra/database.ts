@@ -9,7 +9,8 @@ async function query(queryObject: any) {
     const result = await client.query(queryObject);
     return result;
   } catch (error) {
-    console.log(error);
+    console.log("\n Erro no database:");
+    console.error(error);
     throw error;
   } finally {
     await client?.end();

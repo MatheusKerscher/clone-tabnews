@@ -2,6 +2,7 @@ export class InternalServerError extends Error {
   action: string;
   statusCode: number;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor({ cause }: { cause: any }) {
     super("Ocorreu um erro inesperado no servidor.", {
       cause,

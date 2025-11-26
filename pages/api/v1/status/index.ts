@@ -1,38 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import database from "infra/database";
-import { InternalServerError, MethodNotAllowedError } from "infra/errors";
 import { createRouter } from "next-connect";
+import controller from "infra/controller";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.get(getHandler);
 
-export default router.handler({
-  onNoMatch: onNoMatchHandler,
-  onError: onErrorHandler,
-});
-
-async function onNoMatchHandler(req: NextApiRequest, res: NextApiResponse) {
-  const publicErrorObject = new MethodNotAllowedError();
-  res.status(publicErrorObject.statusCode).json(publicErrorObject);
-}
-
-async function onErrorHandler(
-  error: any,
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  const publicErrorObject = new InternalServerError({
-    cause: error,
-  });
-
-  console.log("\n Erro no next-connect:");
-  console.error(publicErrorObject);
-
-  res.status(publicErrorObject.statusCode).json(publicErrorObject);
-}
+export default router.handler(controller.errorHandler);
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   const updateAt = new Date().toISOString();

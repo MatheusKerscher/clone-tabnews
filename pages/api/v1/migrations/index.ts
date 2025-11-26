@@ -1,42 +1,20 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { createRouter } from "next-connect";
-import { InternalServerError, MethodNotAllowedError } from "infra/errors";
-
-import { runner as migrationsRunner, type RunnerOption } from "node-pg-migrate";
 import { join } from "path";
-
-import database from "infra/database";
 import { cwd } from "process";
+
+import { createRouter } from "next-connect";
 import type { Client } from "pg";
+import { runner as migrationsRunner, type RunnerOption } from "node-pg-migrate";
+
+import controller from "infra/controller";
+import database from "infra/database";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.get(getHandler).post(postHandler);
 
-export default router.handler({
-  onNoMatch: onNoMatchHandler,
-  onError: onErrorHandler,
-});
-
-async function onNoMatchHandler(req: NextApiRequest, res: NextApiResponse) {
-  const publicErrorObject = new MethodNotAllowedError();
-  res.status(publicErrorObject.statusCode).json(publicErrorObject);
-}
-
-async function onErrorHandler(
-  error: any,
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  const publicErrorObject = new InternalServerError({ cause: error });
-
-  console.log("\n Erro no next-connect:");
-  console.error(publicErrorObject);
-
-  res.status(publicErrorObject.statusCode).json(publicErrorObject);
-}
+export default router.handler(controller.errorHandler);
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   let client;

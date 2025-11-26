@@ -12,8 +12,12 @@ async function onErrorHandler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  console.log("statusCode:", error.statusCode);
+  console.log("error:", error);
+
   const publicErrorObject = new InternalServerError({
     cause: error,
+    statusCode: error.statusCode,
   });
 
   console.error(publicErrorObject);

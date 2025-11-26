@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { createRouter } from "next-connect";
@@ -24,7 +25,6 @@ async function onNoMatchHandler(req: NextApiRequest, res: NextApiResponse) {
   res.status(publicErrorObject.statusCode).json(publicErrorObject);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function onErrorHandler(
   error: any,
   req: NextApiRequest,

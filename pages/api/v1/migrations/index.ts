@@ -13,13 +13,13 @@ router.post(postHandler);
 export default router.handler(controller.errorHandler);
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
-  const pendingMigrations = await migrator.listPendingMigrations();
+  const pendingMigrations = await migrator.runPendingMigrations(true);
 
   res.status(200).json(pendingMigrations);
 }
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
-  const migratedMigrations = await migrator.runPendingMigrations();
+  const migratedMigrations = await migrator.runPendingMigrations(false);
 
   if (migratedMigrations.length) {
     return res.status(201).json(migratedMigrations);

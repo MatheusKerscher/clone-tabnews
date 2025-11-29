@@ -1,7 +1,7 @@
 import { join } from "path";
 import { cwd } from "process";
 
-import { runner as migrationsRunner, type RunnerOption } from "node-pg-migrate";
+import migrationsRunner, { type RunnerOption } from "node-pg-migrate";
 
 import database from "infra/database";
 import { ServiceError } from "infra/errors";
@@ -10,7 +10,7 @@ const migrationOptions = {
   dir: join(cwd(), "infra", "migrations"),
   direction: "up",
   migrationsTable: "pgmigrations",
-  verbose: true,
+  log: () => {},
 };
 
 async function runPendingMigrations(isDryRun: boolean) {

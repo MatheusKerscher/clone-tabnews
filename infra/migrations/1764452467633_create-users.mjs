@@ -22,8 +22,7 @@ export const up = (pgm) => {
     // Why 60 characters? https://www.npmjs.com/package/bcrypt#hash-info
     password: {
       type: "varchar(60)",
-      notNull: true,
-      unique: true
+      notNull: true
     },
 
     // Why timestamp with timezone? https://justatheory.com/2012/04/postgres-use-timestamptz/

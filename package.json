@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "license": "MIT",
-  "type": "module",
   "description": "Implementação do https://www.tabnews.com.br feita no https://curso.dev/",
   "repository": {
     "type": "git",

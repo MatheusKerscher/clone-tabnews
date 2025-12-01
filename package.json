@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "license": "MIT",
-  "type": "module",
   "description": "Implementação do https://www.tabnews.com.br feita no https://curso.dev/",
   "repository": {
     "type": "git",
@@ -39,11 +38,12 @@
     "dotenv-expand": "12.0.3",
     "next": "16.0.3",
     "next-connect": "1.0.0",
-    "node-pg-migrate": "8.0.3",
+    "node-pg-migrate": "6.2.2",
     "pg": "8.16.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "swr": "2.3.6"
+    "swr": "2.3.6",
+    "uuid": "11.1.0"
   },
   "devDependencies": {
     "@commitlint/cli": "20.1.0",

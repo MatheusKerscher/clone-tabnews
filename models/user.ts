@@ -1,5 +1,6 @@
 import database from "infra/database";
 import { ValidationError, NotFoundError } from "infra/errors";
+import password from "./password";
 
 type UserProps = {
   username: string;
@@ -38,10 +39,12 @@ async function findOneByUsername(username: string) {
   }
 }
 
-async function create({ username, email, password }: UserProps) {
-  await validateUniqueUsername(username);
-  await validateUniqueEmail(email);
-  const newUser = await runInsertQuery({ username, email, password });
+async function create(userInputValues: UserProps) {
+  await validateUniqueUsername(userInputValues.username);
+  await validateUniqueEmail(userInputValues.email);
+  await hashPasswordInObject(userInputValues);
+
+  const newUser = await runInsertQuery({ ...userInputValues });
   return newUser;
 
   async function runInsertQuery({ username, email, password }: UserProps) {
@@ -58,6 +61,12 @@ async function create({ username, email, password }: UserProps) {
     });
 
     return results.rows[0];
+  }
+
+  async function hashPasswordInObject(userInputValues: UserProps) {
+    const hashedPassword = await password.hash(userInputValues.password);
+
+    userInputValues.password = hashedPassword;
   }
 }
 

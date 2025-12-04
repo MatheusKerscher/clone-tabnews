@@ -2,25 +2,12 @@ import database from "infra/database";
 import { ValidationError, NotFoundError } from "infra/errors";
 import password from "./password";
 
-type UserProps = {
-  username: string;
-  email: string;
-  password: string;
-};
-
-type UpdateUserProps = {
-  id: string;
-  username?: string;
-  email?: string;
-  password?: string;
-};
-
-async function findOneByUsername(username: string) {
+async function findOneByUsername(username) {
   const userFound = await runSelectQuery(username);
 
   return userFound;
 
-  async function runSelectQuery(username: string) {
+  async function runSelectQuery(username) {
     const results = await database.query({
       text: `
         SELECT 
@@ -46,7 +33,7 @@ async function findOneByUsername(username: string) {
   }
 }
 
-async function create(userInputValues: UserProps) {
+async function create(userInputValues) {
   await validateUniqueUsername(userInputValues.username);
   await validateUniqueEmail(userInputValues.email);
   await hashPasswordInObject(userInputValues);
@@ -54,7 +41,7 @@ async function create(userInputValues: UserProps) {
   const newUser = await runInsertQuery({ ...userInputValues });
   return newUser;
 
-  async function runInsertQuery({ username, email, password }: UserProps) {
+  async function runInsertQuery({ username, email, password }) {
     const results = await database.query({
       text: `
         INSERT INTO 
@@ -71,7 +58,7 @@ async function create(userInputValues: UserProps) {
   }
 }
 
-async function update(username: string, userInputValues: UpdateUserProps) {
+async function update(username, userInputValues) {
   const userFound = await findOneByUsername(username);
 
   if (userInputValues.username) {
@@ -96,7 +83,7 @@ async function update(username: string, userInputValues: UpdateUserProps) {
 
   return updatedUser;
 
-  async function runUpdateQuery(userInputValues: UpdateUserProps) {
+  async function runUpdateQuery(userInputValues) {
     const results = await database.query({
       text: `
         UPDATE 
@@ -123,7 +110,7 @@ async function update(username: string, userInputValues: UpdateUserProps) {
   }
 }
 
-async function validateUniqueUsername(username: string) {
+async function validateUniqueUsername(username) {
   const results = await database.query({
     text: `
       SELECT 
@@ -144,7 +131,7 @@ async function validateUniqueUsername(username: string) {
   }
 }
 
-async function validateUniqueEmail(email: string) {
+async function validateUniqueEmail(email) {
   const results = await database.query({
     text: `
       SELECT 
@@ -165,10 +152,8 @@ async function validateUniqueEmail(email: string) {
   }
 }
 
-async function hashPasswordInObject(
-  userInputValues: UserProps | UpdateUserProps,
-) {
-  const hashedPassword = await password.hash(userInputValues.password!);
+async function hashPasswordInObject(userInputValues) {
+  const hashedPassword = await password.hash(userInputValues.password);
 
   userInputValues.password = hashedPassword;
 }

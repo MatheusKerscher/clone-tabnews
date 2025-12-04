@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import type { NextApiRequest, NextApiResponse } from "next";
 import {
   InternalServerError,
   MethodNotAllowedError,
@@ -7,16 +5,12 @@ import {
   ValidationError,
 } from "./errors";
 
-async function onNoMatchHandler(req: NextApiRequest, res: NextApiResponse) {
+async function onNoMatchHandler(req, res) {
   const publicErrorObject = new MethodNotAllowedError();
   res.status(publicErrorObject.statusCode).json(publicErrorObject);
 }
 
-async function onErrorHandler(
-  error: any,
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+async function onErrorHandler(error, req, res) {
   if (error instanceof ValidationError || error instanceof NotFoundError) {
     return res.status(error.statusCode).json(error);
   }

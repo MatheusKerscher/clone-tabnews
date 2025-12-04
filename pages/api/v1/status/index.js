@@ -1,16 +1,14 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-
 import database from "infra/database";
 import { createRouter } from "next-connect";
 import controller from "infra/controller";
 
-const router = createRouter<NextApiRequest, NextApiResponse>();
+const router = createRouter();
 
 router.get(getHandler);
 
 export default router.handler(controller.errorHandler);
 
-async function getHandler(req: NextApiRequest, res: NextApiResponse) {
+async function getHandler(req, res) {
   const updateAt = new Date().toISOString();
   const databaseVersion = (await database.query("SHOW server_version;")).rows[0]
     .server_version;

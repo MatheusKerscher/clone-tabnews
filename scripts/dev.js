@@ -1,4 +1,4 @@
-import { spawn } from "child_process";
+const { spawn } = require("node:child_process");
 
 function run(cmd, args) {
   return new Promise((resolve, reject) => {
@@ -34,7 +34,7 @@ async function main() {
     await run("npm", ["run", "services:up"]);
     await run("npm", ["run", "services:wait:database"]);
     await run("npm", ["run", "migrations:up"]);
-    await run("next", ["dev", "--turbopack"]);
+    await run("next", ["dev"]);
   } catch (err) {
     console.error("Erro:", err.message);
   } finally {

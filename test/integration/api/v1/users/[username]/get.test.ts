@@ -34,7 +34,7 @@ describe("GET /api/v1/users/[username]", () => {
         id: response2Body.id,
         username: "CaseMatch",
         email: "case.match@gmail.com",
-        password: "senha123",
+        password: response2Body.password,
         created_at: response2Body.created_at,
         updated_at: response2Body.updated_at,
       });
@@ -68,7 +68,7 @@ describe("GET /api/v1/users/[username]", () => {
         id: response2Body.id,
         username: "CaseMismatch",
         email: "case.mismatch@gmail.com",
-        password: "senha123",
+        password: response2Body.password,
         created_at: response2Body.created_at,
         updated_at: response2Body.updated_at,
       });
@@ -82,6 +82,7 @@ describe("GET /api/v1/users/[username]", () => {
       const response = await fetch(
         "http://localhost:3000/api/v1/users/NonExistentUsername",
       );
+      expect(response.status).toBe(404);
 
       const responseBody = await response.json();
 

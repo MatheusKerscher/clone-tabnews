@@ -1,10 +1,18 @@
 import database from "infra/database";
 import { ValidationError, NotFoundError } from "infra/errors";
+import password from "./password";
 
 type UserProps = {
   username: string;
   email: string;
   password: string;
+};
+
+type UpdateUserProps = {
+  id: string;
+  username?: string;
+  email?: string;
+  password?: string;
 };
 
 async function findOneByUsername(username: string) {
@@ -38,10 +46,12 @@ async function findOneByUsername(username: string) {
   }
 }
 
-async function create({ username, email, password }: UserProps) {
-  await validateUniqueUsername(username);
-  await validateUniqueEmail(email);
-  const newUser = await runInsertQuery({ username, email, password });
+async function create(userInputValues: UserProps) {
+  await validateUniqueUsername(userInputValues.username);
+  await validateUniqueEmail(userInputValues.email);
+  await hashPasswordInObject(userInputValues);
+
+  const newUser = await runInsertQuery({ ...userInputValues });
   return newUser;
 
   async function runInsertQuery({ username, email, password }: UserProps) {
@@ -61,24 +71,55 @@ async function create({ username, email, password }: UserProps) {
   }
 }
 
-async function validateUniqueEmail(email: string) {
-  const results = await database.query({
-    text: `
-      SELECT 
-        email
-      FROM 
-        users
-      WHERE
-        LOWER(email) = LOWER($1)
-      ;`,
-    values: [email],
-  });
+async function update(username: string, userInputValues: UpdateUserProps) {
+  const userFound = await findOneByUsername(username);
 
-  if (results.rowCount > 0) {
-    throw new ValidationError({
-      message: "O e-mail informado já está sendo utilizado.",
-      action: "Utilize outro e-mail para realizar o cadastro.",
+  if (userInputValues.username) {
+    if (
+      userInputValues.username?.toLowerCase() !==
+      userFound.username.toLowerCase()
+    ) {
+      await validateUniqueUsername(userInputValues.username);
+    }
+  }
+
+  if (userInputValues.email) {
+    await validateUniqueEmail(userInputValues.email);
+  }
+
+  if (userInputValues.password) {
+    await hashPasswordInObject(userInputValues);
+  }
+
+  const newUserProps = { ...userFound, ...userInputValues };
+  const updatedUser = await runUpdateQuery(newUserProps);
+
+  return updatedUser;
+
+  async function runUpdateQuery(userInputValues: UpdateUserProps) {
+    const results = await database.query({
+      text: `
+        UPDATE 
+          users 
+        SET
+          username = $2,
+          email = $3,
+          password = $4,
+          updated_at = timezone('utc', NOW())
+        WHERE
+          id = $1
+        RETURNING
+          *
+        ;`,
+      values: [
+        userInputValues.id,
+        userInputValues.username,
+        userInputValues.email,
+        userInputValues.password,
+      ],
     });
+
+    return results.rows[0];
   }
 }
 
@@ -98,14 +139,44 @@ async function validateUniqueUsername(username: string) {
   if (results.rowCount > 0) {
     throw new ValidationError({
       message: "O username informado já está sendo utilizado.",
-      action: "Utilize outro username para realizar o cadastro.",
+      action: "Utilize outro username para realizar esta operação.",
     });
   }
 }
 
+async function validateUniqueEmail(email: string) {
+  const results = await database.query({
+    text: `
+      SELECT 
+        email
+      FROM 
+        users
+      WHERE
+        LOWER(email) = LOWER($1)
+      ;`,
+    values: [email],
+  });
+
+  if (results.rowCount > 0) {
+    throw new ValidationError({
+      message: "O e-mail informado já está sendo utilizado.",
+      action: "Utilize outro e-mail para realizar esta operação.",
+    });
+  }
+}
+
+async function hashPasswordInObject(
+  userInputValues: UserProps | UpdateUserProps,
+) {
+  const hashedPassword = await password.hash(userInputValues.password!);
+
+  userInputValues.password = hashedPassword;
+}
+
 const user = {
-  create,
   findOneByUsername,
+  create,
+  update,
 };
 
 export default user;

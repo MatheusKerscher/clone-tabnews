@@ -82,6 +82,7 @@ describe("GET /api/v1/users/[username]", () => {
       const response = await fetch(
         "http://localhost:3000/api/v1/users/NonExistentUsername",
       );
+      expect(response.status).toBe(404);
 
       const responseBody = await response.json();
 

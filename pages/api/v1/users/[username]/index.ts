@@ -8,6 +8,7 @@ import user from "models/user";
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.get(getHandler);
+router.patch(patchHandler);
 
 export default router.handler(controller.errorHandler);
 
@@ -16,4 +17,12 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   const userFound = await user.findOneByUsername(username);
 
   res.status(200).json(userFound);
+}
+
+async function patchHandler(req: NextApiRequest, res: NextApiResponse) {
+  const username = req.query.username as string;
+  const userInputValues = req.body;
+  const updatedUser = await user.update(username, userInputValues);
+
+  res.status(200).json(updatedUser);
 }

@@ -1,6 +1,6 @@
 import { version as uuidVersion } from "uuid";
 
-import orchestrator from "test/orchestrator.ts";
+import orchestrator from "tests/orchestrator.js";
 import user from "models/user";
 import password from "models/password";
 

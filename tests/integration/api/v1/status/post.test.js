@@ -1,17 +1,15 @@
-import orchestrator from "test/orchestrator.ts";
+import orchestrator from "tests/orchestrator.js";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
-  await orchestrator.clearDatabase();
 });
 
-describe("DELETE /api/v1/migrations", () => {
+describe("POST /api/v1/status", () => {
   describe("Anonymous user", () => {
-    test("Retrieving pending migrations", async () => {
-      const response = await fetch("http://localhost:3000/api/v1/migrations", {
-        method: "DELETE",
+    test("Retrieving current system status", async () => {
+      const response = await fetch("http://localhost:3000/api/v1/status", {
+        method: "POST",
       });
-
       expect(response.status).toBe(405);
 
       const responseBody = await response.json();

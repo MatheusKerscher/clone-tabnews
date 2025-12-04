@@ -1,29 +1,14 @@
 import useSWR from "swr";
 
-const fetchAPI = async (key: string) => {
+const fetchAPI = async (key) => {
   const response = await fetch(key);
   return response.json();
 };
 
-type HealthDataProps = {
-  update_at: string;
-  dependencies: {
-    database: {
-      version: string;
-      max_connections: number;
-      opened_connections: number;
-    };
-  };
-};
-
 const HealthData = () => {
-  const { data, error, isLoading } = useSWR<HealthDataProps>(
-    "/api/v1/status",
-    fetchAPI,
-    {
-      refreshInterval: 2000,
-    },
-  );
+  const { data, error, isLoading } = useSWR("/api/v1/status", fetchAPI, {
+    refreshInterval: 2000,
+  });
 
   if (error) {
     return (

@@ -1,7 +1,7 @@
 import { join } from "path";
 import { cwd } from "process";
 
-import migrationsRunner, { type RunnerOption } from "node-pg-migrate";
+import migrationsRunner from "node-pg-migrate";
 
 import database from "infra/database";
 import { ServiceError } from "infra/errors";
@@ -13,7 +13,7 @@ const migrationOptions = {
   log: () => {},
 };
 
-async function runPendingMigrations(isDryRun: boolean) {
+async function runPendingMigrations(isDryRun) {
   let client;
 
   try {
@@ -23,7 +23,7 @@ async function runPendingMigrations(isDryRun: boolean) {
       ...migrationOptions,
       dryRun: isDryRun,
       dbClient: client,
-    } as RunnerOption);
+    });
 
     return pendingMigrations;
   } catch (error) {

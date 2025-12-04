@@ -1,8 +1,7 @@
 import { Client } from "pg";
 import { ServiceError } from "./errors";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function query(queryObject: any) {
+async function query(queryObject) {
   let client;
 
   try {

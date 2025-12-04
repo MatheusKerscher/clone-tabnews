@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export class InternalServerError extends Error {
-  action: string;
-  statusCode: number;
+  action;
+  statusCode;
 
-  constructor({ cause, statusCode }: { cause: any; statusCode?: number }) {
+  constructor({ cause, statusCode }) {
     super("Ocorreu um erro inesperado no servidor.", {
       cause,
     });
@@ -24,10 +23,10 @@ export class InternalServerError extends Error {
 }
 
 export class ServiceError extends Error {
-  action: string;
-  statusCode: number;
+  action;
+  statusCode;
 
-  constructor({ cause, message }: { cause: any; message?: string }) {
+  constructor({ cause, message }) {
     super(message || "Serviço indisponível no momento.", {
       cause,
     });
@@ -48,8 +47,8 @@ export class ServiceError extends Error {
 }
 
 export class MethodNotAllowedError extends Error {
-  action: string;
-  statusCode: number;
+  action;
+  statusCode;
 
   constructor() {
     super("Esse método HTTP não é permitido.");
@@ -70,18 +69,10 @@ export class MethodNotAllowedError extends Error {
 }
 
 export class ValidationError extends Error {
-  action: string;
-  statusCode: number;
+  action;
+  statusCode;
 
-  constructor({
-    cause,
-    message,
-    action,
-  }: {
-    cause?: any;
-    message?: string;
-    action?: string;
-  }) {
+  constructor({ cause, message, action }) {
     super(message || "Um erro de validação ocorreu.", {
       cause,
     });
@@ -102,18 +93,10 @@ export class ValidationError extends Error {
 }
 
 export class NotFoundError extends Error {
-  action: string;
-  statusCode: number;
+  action;
+  statusCode;
 
-  constructor({
-    cause,
-    message,
-    action,
-  }: {
-    cause?: any;
-    message?: string;
-    action?: string;
-  }) {
+  constructor({ cause, message, action }) {
     super(message || "Não foi possível encontrar este recurso no sistema.", {
       cause,
     });

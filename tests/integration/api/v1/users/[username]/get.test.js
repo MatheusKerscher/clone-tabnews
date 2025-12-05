@@ -11,7 +11,7 @@ beforeAll(async () => {
 describe("GET /api/v1/users/[username]", () => {
   describe("Anonymous user", () => {
     test("With exact case match", async () => {
-      const createdUser = await orchestrator.createUser()
+      const createdUser = await orchestrator.createUser();
 
       const response = await fetch(
         `http://localhost:3000/api/v1/users/${createdUser.username}`,
@@ -34,7 +34,7 @@ describe("GET /api/v1/users/[username]", () => {
     });
 
     test("With case mismatch", async () => {
-      const createdUser = await orchestrator.createUser()
+      const createdUser = await orchestrator.createUser();
 
       const response = await fetch(
         `http://localhost:3000/api/v1/users/${createdUser.username.toUpperCase()}`,

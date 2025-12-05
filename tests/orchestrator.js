@@ -31,17 +31,19 @@ async function runPendingMigrations() {
 
 async function createUser(userInputValues) {
   return user.create({
-    username: userInputValues?.username || faker.internet.username().replace(/[^a-zA-Z0-9]/g, ""),
+    username:
+      userInputValues?.username ||
+      faker.internet.username().replace(/[^a-zA-Z0-9]/g, ""),
     email: userInputValues?.email || faker.internet.email(),
-    password: userInputValues?.password || "validpassword"
-  })
+    password: userInputValues?.password || "validpassword",
+  });
 }
 
 const orchestrator = {
   waitForAllServices,
   clearDatabase,
   runPendingMigrations,
-  createUser
+  createUser,
 };
 
 export default orchestrator;

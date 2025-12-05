@@ -35,18 +35,21 @@ describe("PATCH /api/v1/users/[username]", () => {
     });
 
     test("With duplicated 'username'", async () => {
-      const createdUser1 = await orchestrator.createUser()
-      const createdUser2 = await orchestrator.createUser()
+      const createdUser1 = await orchestrator.createUser();
+      const createdUser2 = await orchestrator.createUser();
 
-      const response = await fetch(`http://localhost:3000/api/v1/users/${createdUser2.username}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `http://localhost:3000/api/v1/users/${createdUser2.username}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: createdUser1.username,
+          }),
         },
-        body: JSON.stringify({
-          username: createdUser1.username,
-        }),
-      });
+      );
       expect(response.status).toBe(400);
 
       const responseBody = await response.json();
@@ -60,18 +63,21 @@ describe("PATCH /api/v1/users/[username]", () => {
     });
 
     test("With duplicated 'email'", async () => {
-      const createdUser1 = await orchestrator.createUser()
-      const createdUser2 = await orchestrator.createUser()
+      const createdUser1 = await orchestrator.createUser();
+      const createdUser2 = await orchestrator.createUser();
 
-      const response = await fetch(`http://localhost:3000/api/v1/users/${createdUser2.username}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `http://localhost:3000/api/v1/users/${createdUser2.username}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: createdUser1.email,
+          }),
         },
-        body: JSON.stringify({
-          email: createdUser1.email,
-        }),
-      });
+      );
       expect(response.status).toBe(400);
 
       const responseBody = await response.json();
@@ -86,8 +92,8 @@ describe("PATCH /api/v1/users/[username]", () => {
 
     test("With unique 'username'", async () => {
       const createdUser = await orchestrator.createUser({
-        username: "uniqueUsername"
-      })
+        username: "uniqueUsername",
+      });
 
       const response = await fetch(
         "http://localhost:3000/api/v1/users/uniqueusername",
@@ -123,7 +129,7 @@ describe("PATCH /api/v1/users/[username]", () => {
     test("With unique 'email'", async () => {
       const createdUser = await orchestrator.createUser({
         email: "uniqueemail@gmail.com",
-      })
+      });
 
       const response = await fetch(
         `http://localhost:3000/api/v1/users/${createdUser.username}`,
@@ -157,7 +163,7 @@ describe("PATCH /api/v1/users/[username]", () => {
     });
 
     test("With new 'password'", async () => {
-      const createdUser = await orchestrator.createUser()
+      const createdUser = await orchestrator.createUser();
 
       const response = await fetch(
         `http://localhost:3000/api/v1/users/${createdUser.username}`,
@@ -207,8 +213,8 @@ describe("PATCH /api/v1/users/[username]", () => {
 
     test("With same 'username' but different case", async () => {
       const createdUser = await orchestrator.createUser({
-        username: "usercase1"
-      })
+        username: "usercase1",
+      });
 
       const response = await fetch(
         "http://localhost:3000/api/v1/users/usercase1",

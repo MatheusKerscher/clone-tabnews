@@ -58,7 +58,7 @@ describe("POST /api/v1/users", () => {
     });
 
     test("With duplicated 'email'", async () => {
-      const createdUser = await orchestrator.createUser()
+      const createdUser = await orchestrator.createUser();
 
       const response = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",
@@ -84,7 +84,7 @@ describe("POST /api/v1/users", () => {
     });
 
     test("With duplicated 'username'", async () => {
-      const createdUser = await orchestrator.createUser()
+      const createdUser = await orchestrator.createUser();
 
       const response2 = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",

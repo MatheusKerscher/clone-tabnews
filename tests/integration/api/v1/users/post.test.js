@@ -58,35 +58,24 @@ describe("POST /api/v1/users", () => {
     });
 
     test("With duplicated 'email'", async () => {
-      const response1 = await fetch("http://localhost:3000/api/v1/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "emailduplicado1",
-          email: "emailduplicado@gmail.com",
-          password: "senha123",
-        }),
-      });
-      expect(response1.status).toBe(201);
+      const createdUser = await orchestrator.createUser()
 
-      const response2 = await fetch("http://localhost:3000/api/v1/users", {
+      const response = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           username: "emailduplicado2",
-          email: "Emailduplicado@gmail.com",
+          email: createdUser.email,
           password: "senha123",
         }),
       });
-      expect(response2.status).toBe(400);
+      expect(response.status).toBe(400);
 
-      const response2Body = await response2.json();
+      const responseBody = await response.json();
 
-      expect(response2Body).toEqual({
+      expect(responseBody).toEqual({
         name: "ValidationError",
         message: "O e-mail informado já está sendo utilizado.",
         action: "Utilize outro e-mail para realizar esta operação.",
@@ -95,18 +84,7 @@ describe("POST /api/v1/users", () => {
     });
 
     test("With duplicated 'username'", async () => {
-      const response1 = await fetch("http://localhost:3000/api/v1/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "usernameduplicado",
-          email: "usernameduplicado1@gmail.com",
-          password: "senha123",
-        }),
-      });
-      expect(response1.status).toBe(201);
+      const createdUser = await orchestrator.createUser()
 
       const response2 = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",
@@ -114,7 +92,7 @@ describe("POST /api/v1/users", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: "Usernameduplicado",
+          username: createdUser.username,
           email: "usernameduplicado2@gmail.com",
           password: "senha123",
         }),

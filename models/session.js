@@ -1,9 +1,40 @@
 import crypto from "node:crypto";
-import * as cookie from "cookie";
 
 import database from "infra/database";
+import { UnauthorizedError } from "infra/errors";
 
 const EXPIRES_IN_MILLISECONDS = 60 * 60 * 24 * 30 * 1000;
+
+async function findOneValidByToken(sessionToken) {
+  const foundSession = await runSelectQuery(sessionToken);
+  return foundSession;
+
+  async function runSelectQuery(sessionToken) {
+    const results = await database.query({
+      text: `
+        SELECT
+          *
+        FROM 
+          sessions
+        WHERE
+          expires_at > NOW()
+          AND token = $1
+        LIMIT
+          1
+      ;`,
+      values: [sessionToken],
+    });
+
+    if (results.rowCount === 0) {
+      throw new UnauthorizedError({
+        message: "Usuário não possui sessão ativa.",
+        action: "Verifique se este usuário está logado e tente novamente.",
+      });
+    }
+
+    return results.rows[0];
+  }
+}
 
 async function create(userId) {
   //Why 48 bytes? 1 byte = 2 characters in hex, 48 bytes = 96 characters (size of field token in database)
@@ -30,19 +61,41 @@ async function create(userId) {
   }
 }
 
-function createCookie(sessionToken) {
-  return cookie.serialize("session_id", sessionToken, {
-    path: "/",
-    httpOnly: true,
-    maxAge: EXPIRES_IN_MILLISECONDS / 1000,
-    secure: process.env.NODE_ENV === "production",
-  });
+async function renew(sessionId) {
+  const expiresAt = getExpiresAt();
+
+  const renewedSession = await runUpdateQuery(sessionId, expiresAt);
+  return renewedSession;
+
+  async function runUpdateQuery(sessionId, expiresAt) {
+    const results = await database.query({
+      text: `
+        UPDATE
+          sessions
+        SET
+          updated_at = timezone('utc', NOW()),
+          expires_at = $2
+        WHERE
+          id = $1
+        RETURNING
+          *
+      ;`,
+      values: [sessionId, expiresAt],
+    });
+
+    return results.rows[0];
+  }
+}
+
+function getExpiresAt() {
+  return new Date(Date.now() + EXPIRES_IN_MILLISECONDS);
 }
 
 const session = {
   EXPIRES_IN_MILLISECONDS,
   create,
-  createCookie,
+  renew,
+  findOneValidByToken,
 };
 
 export default session;

@@ -18,9 +18,8 @@ async function postHandler(req, res) {
     userInputValues.password,
   );
   const createdSession = await session.create(authenticatedUser.id);
-  const setCookie = session.createCookie(createdSession.token);
 
-  res.setHeader("Set-Cookie", setCookie);
+  controller.createSessionCookie(createdSession.token, res);
 
   res.status(201).json(createdSession);
 }

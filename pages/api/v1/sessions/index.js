@@ -7,6 +7,7 @@ import session from "models/session";
 const router = createRouter();
 
 router.post(postHandler);
+router.delete(deleteHandler);
 
 export default router.handler(controller.errorHandler);
 
@@ -22,4 +23,14 @@ async function postHandler(req, res) {
   controller.createSessionCookie(createdSession.token, res);
 
   res.status(201).json(createdSession);
+}
+
+async function deleteHandler(req, res) {
+  const sessionToken = req.cookies.session_id;
+
+  const sessionFound = await session.findOneValidByToken(sessionToken);
+  const expiredSession = await session.expireById(sessionFound.id);
+
+  controller.clearSessionCookie(res);
+  res.status(200).json(expiredSession);
 }

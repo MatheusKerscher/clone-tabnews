@@ -87,6 +87,30 @@ async function renew(sessionId) {
   }
 }
 
+async function expireById(sessionId) {
+  const renewedSession = await runUpdateQuery(sessionId);
+  return renewedSession;
+
+  async function runUpdateQuery(sessionId) {
+    const results = await database.query({
+      text: `
+        UPDATE
+          sessions
+        SET
+          updated_at = timezone('utc', NOW()),
+          expires_at = timezone('utc', expires_at - interval '1 year')
+        WHERE
+          id = $1
+        RETURNING
+          *
+      ;`,
+      values: [sessionId],
+    });
+
+    return results.rows[0];
+  }
+}
+
 function getExpiresAt() {
   return new Date(Date.now() + EXPIRES_IN_MILLISECONDS);
 }
@@ -95,6 +119,7 @@ const session = {
   EXPIRES_IN_MILLISECONDS,
   create,
   renew,
+  expireById,
   findOneValidByToken,
 };
 

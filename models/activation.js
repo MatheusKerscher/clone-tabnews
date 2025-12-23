@@ -2,6 +2,7 @@ import database from "infra/database"
 import email from "infra/email"
 import { NotFoundError } from "infra/errors"
 import webserver from "infra/webserver"
+import user from "./user"
 
 const EXPIRES_IN_MILLISECONDS = 60 * 15 * 1000 // 15 minutes
 
@@ -74,10 +75,41 @@ Equipe Clone TabNews`
   })
 }
 
+async function markTokenAsUsed(validActivationToken) {
+  const usedActivationToken = await runUpdateQuery(validActivationToken.id);
+  return usedActivationToken;
+
+  async function runUpdateQuery(tokenId) {
+    const results = await database.query({
+      text: `
+        UPDATE
+          user_activation_tokens
+        SET
+          updated_at = timezone('utc', NOW()),
+          used_at = timezone('utc', NOW())
+        WHERE
+          id = $1
+        RETURNING
+          *
+      ;`,
+      values: [tokenId],
+    });
+
+    return results.rows[0];
+  }
+}
+
+async function activateUserByUserId(userId) {
+  const activatedUser = await user.setFeatures(userId, ["create:session"])
+  return activatedUser
+}
+
 const activation = {
   create,
   findOneValidById,
-  sendEmailToUser
+  sendEmailToUser,
+  markTokenAsUsed,
+  activateUserByUserId
 }
 
 export default activation

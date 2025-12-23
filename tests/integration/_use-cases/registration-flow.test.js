@@ -1,5 +1,6 @@
 import webserver from "infra/webserver";
 import activation from "models/activation";
+import user from "models/user";
 import orchestrator from "tests/orchestrator.js";
 
 beforeAll(async () => {
@@ -12,6 +13,7 @@ beforeAll(async () => {
 
 describe("Use case: Registration Flow (all successful)", () => {
   let createdUser;
+  let tokenUUID
 
   test("Create user account", async () => {
     const response = await fetch("http://localhost:3000/api/v1/users", {
@@ -20,7 +22,7 @@ describe("Use case: Registration Flow (all successful)", () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: "FlowRegistration",
+        username: "RegistrationFlow",
         email: "flow.registration@email.com",
         password: "senha123",
       }),
@@ -31,7 +33,7 @@ describe("Use case: Registration Flow (all successful)", () => {
 
     expect(createdUser).toEqual({
       id: createdUser.id,
-      username: "FlowRegistration",
+      username: "RegistrationFlow",
       email: "flow.registration@email.com",
       features: ["read:activation_token"],
       password: createdUser.password,
@@ -46,9 +48,9 @@ describe("Use case: Registration Flow (all successful)", () => {
     expect(activationEmail.sender).toBe("<contato@kerscher.dev.br>");
     expect(activationEmail.recipients[0]).toBe("<flow.registration@email.com>");
     expect(activationEmail.subject).toBe("Ative seu cadastro no Clone do TabNews!");
-    expect(activationEmail.text).toContain("FlowRegistration");
+    expect(activationEmail.text).toContain("RegistrationFlow");
 
-    const tokenUUID = orchestrator.extractUUID(activationEmail.text);
+    tokenUUID = orchestrator.extractUUID(activationEmail.text);
     const activationToken = await activation.findOneValidById(tokenUUID)
 
     expect(activationEmail.text).toContain(`${webserver.origin}/cadastro/ativar${activationToken.id}`)
@@ -57,6 +59,18 @@ describe("Use case: Registration Flow (all successful)", () => {
   });
 
   test("Activate account", async () => {
+    const activationResponse = await fetch(`http://localhost:3000/api/v1/activations/${tokenUUID}`, {
+      method: "PATCH",
+    });
+
+    expect(activationResponse.status).toBe(200)
+
+    const activationResponseBody = await activationResponse.json()
+
+    expect(Date.parse(activationResponseBody.used_at)).not.toBeNaN()
+
+    const activatedUser = await user.findOneByUsername("RegistrationFlow")
+    expect(activatedUser.features).toEqual(["create:session"])
   });
 
   test("Login", async () => {

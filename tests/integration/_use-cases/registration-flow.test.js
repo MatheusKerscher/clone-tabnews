@@ -37,6 +37,12 @@ describe("Use case: Registration Flow (all successful)", () => {
   });
 
   test("Receive activation email", async () => {
+    const activationEmail = await orchestrator.getLastEmail()
+
+    expect(activationEmail.sender).toBe("<contato@kerscher.dev.br>");
+    expect(activationEmail.recipients[0]).toBe("<flow.registration@email.com>");
+    expect(activationEmail.subject).toBe("Ative seu cadastro no Clone do TabNews!");
+    expect(activationEmail.text).toContain("FlowRegistration");
   });
 
   test("Activate account", async () => {

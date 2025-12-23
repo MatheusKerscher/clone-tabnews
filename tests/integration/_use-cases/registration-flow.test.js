@@ -1,3 +1,5 @@
+import webserver from "infra/webserver";
+import activation from "models/activation";
 import orchestrator from "tests/orchestrator.js";
 
 beforeAll(async () => {
@@ -9,6 +11,8 @@ beforeAll(async () => {
 
 
 describe("Use case: Registration Flow (all successful)", () => {
+  let createdUser;
+
   test("Create user account", async () => {
     const response = await fetch("http://localhost:3000/api/v1/users", {
       method: "POST",
@@ -23,16 +27,16 @@ describe("Use case: Registration Flow (all successful)", () => {
     });
     expect(response.status).toBe(201);
 
-    const responseBody = await response.json();
+    createdUser = await response.json();
 
-    expect(responseBody).toEqual({
-      id: responseBody.id,
+    expect(createdUser).toEqual({
+      id: createdUser.id,
       username: "FlowRegistration",
       email: "flow.registration@email.com",
       features: ["read:activation_token"],
-      password: responseBody.password,
-      created_at: responseBody.created_at,
-      updated_at: responseBody.updated_at,
+      password: createdUser.password,
+      created_at: createdUser.created_at,
+      updated_at: createdUser.updated_at,
     });
   });
 
@@ -43,6 +47,13 @@ describe("Use case: Registration Flow (all successful)", () => {
     expect(activationEmail.recipients[0]).toBe("<flow.registration@email.com>");
     expect(activationEmail.subject).toBe("Ative seu cadastro no Clone do TabNews!");
     expect(activationEmail.text).toContain("FlowRegistration");
+
+    const tokenUUID = orchestrator.extractUUID(activationEmail.text);
+    const activationToken = await activation.findOneValidById(tokenUUID)
+
+    expect(activationEmail.text).toContain(`${webserver.origin}/cadastro/ativar${activationToken.id}`)
+    expect(activationToken.user_id).toBe(createdUser.id)
+    expect(activationToken.used_at).toBe(null)
   });
 
   test("Activate account", async () => {

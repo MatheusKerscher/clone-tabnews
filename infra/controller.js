@@ -10,6 +10,7 @@ import {
 } from "./errors";
 import session from "models/session";
 import user from "models/user";
+import authorization from "models/authorization";
 
 async function onNoMatchHandler(req, res) {
   const publicErrorObject = new MethodNotAllowedError();
@@ -96,13 +97,14 @@ function injectAnonymousUser(req) {
 function canRequest(feature) {
   return function canRequestMiddleware(req, res, next) {
     const userTryingToRequest = req.context.user
-    if (userTryingToRequest.features.includes(feature)) {
+
+    if (authorization.can(userTryingToRequest, feature)) {
       return next()
     }
 
     throw new ForbiddenError({
       message: "Você não possui permissão para executar essa ação.",
-      action: `Verifique se o seu usuário tem a autorização ${feature}.`
+      action: `Verifique se o seu usuário tem a autorização "${feature}".`
     })
   }
 }

@@ -33,9 +33,7 @@ describe("GET /api/v1/user", () => {
       const createdUser = await orchestrator.createUser({
         username: "UserWithValidSession",
       });
-
       const activatedUser = await orchestrator.activateUser(createdUser.id)
-
       const createdSession = await orchestrator.createSession(createdUser.id);
 
       const response = await fetch("http://localhost:3000/api/v1/user", {
@@ -58,7 +56,6 @@ describe("GET /api/v1/user", () => {
         username: createdUser.username,
         email: createdUser.email,
         features: ["read:session", "create:session", "update:user"],
-        password: createdUser.password,
         created_at: createdUser.created_at.toISOString(),
         updated_at: activatedUser.updated_at.toISOString(),
       });
@@ -101,9 +98,7 @@ describe("GET /api/v1/user", () => {
       const createdUser = await orchestrator.createUser({
         username: "User15DaysValidSession",
       });
-
       const activatedUser = await orchestrator.activateUser(createdUser.id)
-
       const createdSession = await orchestrator.createSession(createdUser.id);
 
       jest.useRealTimers();
@@ -123,7 +118,6 @@ describe("GET /api/v1/user", () => {
         username: createdUser.username,
         email: createdUser.email,
         features: ["read:session", "create:session", "update:user"],
-        password: createdUser.password,
         created_at: createdUser.created_at.toISOString(),
         updated_at: activatedUser.updated_at.toISOString(),
       });

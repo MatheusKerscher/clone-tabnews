@@ -3,6 +3,7 @@ import { createRouter } from "next-connect";
 import controller from "infra/controller";
 import session from "models/session";
 import user from "models/user";
+import authorization from "models/authorization";
 
 const router = createRouter();
 
@@ -21,5 +22,8 @@ async function getHandler(req, res) {
   controller.createSessionCookie(renewedSession.token, res);
   controller.disableCacheControl(res);
 
-  res.status(200).json(userFound);
+  const userTryingToGet = req.context.user
+  const secureOutputValues = authorization.filterOutput(userTryingToGet, "read:user:self", userFound)
+
+  res.status(200).json(secureOutputValues);
 }

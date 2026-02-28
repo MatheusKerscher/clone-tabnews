@@ -30,10 +30,11 @@ async function postHandler(req, res) {
   }
 
   const createdSession = await session.create(authenticatedUser.id);
-
   controller.createSessionCookie(createdSession.token, res);
 
-  res.status(201).json(createdSession);
+  const secureOutputValues = authorization.filterOutput(authenticatedUser, "read:session", createdSession)
+
+  res.status(201).json(secureOutputValues);
 }
 
 async function deleteHandler(req, res) {
@@ -43,5 +44,9 @@ async function deleteHandler(req, res) {
   const expiredSession = await session.expireById(sessionFound.id);
 
   controller.clearSessionCookie(res);
-  res.status(200).json(expiredSession);
+
+  const userTryingToDelete = req.context.user
+  const secureOutputValues = authorization.filterOutput(userTryingToDelete, "read:session", expiredSession)
+
+  res.status(200).json(secureOutputValues);
 }

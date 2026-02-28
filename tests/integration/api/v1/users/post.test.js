@@ -113,14 +113,14 @@ describe("POST /api/v1/users", () => {
   describe("Default user", () => {
     test("With unique and valid data", async () => {
       const user1 = await orchestrator.createUser();
-      await orchestrator.activateUser(user1.id)
-      const user1SessionObject = await orchestrator.createSession(user1.id)
+      await orchestrator.activateUser(user1.id);
+      const user1SessionObject = await orchestrator.createSession(user1.id);
 
       const user2Response = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Cookie: `session_id=${user1SessionObject.token}`
+          Cookie: `session_id=${user1SessionObject.token}`,
         },
         body: JSON.stringify({
           username: "usuariologado",
@@ -137,7 +137,7 @@ describe("POST /api/v1/users", () => {
         message: "Você não possui permissão para executar essa ação.",
         action: 'Verifique se o seu usuário tem a autorização "create:user".',
         status_code: 403,
-      })
-    })
-  })
+      });
+    });
+  });
 });

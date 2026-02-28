@@ -16,7 +16,8 @@ describe("GET /api/v1/migrations", () => {
       const responseBody = await response.json();
 
       expect(responseBody).toEqual({
-        action: "Verifique se o seu usuário tem a autorização \"read:migration\".",
+        action:
+          'Verifique se o seu usuário tem a autorização "read:migration".',
         message: "Você não possui permissão para executar essa ação.",
         name: "ForbiddenError",
         status_code: 403,
@@ -26,15 +27,17 @@ describe("GET /api/v1/migrations", () => {
 
   describe("Default user", () => {
     test("Retrieving pending migrations", async () => {
-      const defaultUser = await orchestrator.createUser()
-      await orchestrator.activateUser(defaultUser.id)
-      const defaultUserSession = await orchestrator.createSession(defaultUser.id)
+      const defaultUser = await orchestrator.createUser();
+      await orchestrator.activateUser(defaultUser.id);
+      const defaultUserSession = await orchestrator.createSession(
+        defaultUser.id,
+      );
 
       const response = await fetch("http://localhost:3000/api/v1/migrations", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Cookie: `session_id=${defaultUserSession.token}`
+          Cookie: `session_id=${defaultUserSession.token}`,
         },
       });
 
@@ -43,7 +46,8 @@ describe("GET /api/v1/migrations", () => {
       const responseBody = await response.json();
 
       expect(responseBody).toEqual({
-        action: "Verifique se o seu usuário tem a autorização \"read:migration\".",
+        action:
+          'Verifique se o seu usuário tem a autorização "read:migration".',
         message: "Você não possui permissão para executar essa ação.",
         name: "ForbiddenError",
         status_code: 403,
@@ -53,16 +57,20 @@ describe("GET /api/v1/migrations", () => {
 
   describe("Privileged user", () => {
     test("Retrieving pending migrations", async () => {
-      const privilegedUser = await orchestrator.createUser()
-      await orchestrator.activateUser(privilegedUser.id)
-      await orchestrator.addFeaturesToUser(privilegedUser.id, ["read:migration"])
-      const privilegedUserSession = await orchestrator.createSession(privilegedUser.id)
+      const privilegedUser = await orchestrator.createUser();
+      await orchestrator.activateUser(privilegedUser.id);
+      await orchestrator.addFeaturesToUser(privilegedUser.id, [
+        "read:migration",
+      ]);
+      const privilegedUserSession = await orchestrator.createSession(
+        privilegedUser.id,
+      );
 
       const response = await fetch("http://localhost:3000/api/v1/migrations", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Cookie: `session_id=${privilegedUserSession.token}`
+          Cookie: `session_id=${privilegedUserSession.token}`,
         },
       });
 

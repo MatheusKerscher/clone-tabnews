@@ -152,7 +152,8 @@ export class ForbiddenError extends Error {
     });
 
     this.name = "ForbiddenError";
-    this.action = action || "Verifique as autorizações necessárias antes de continuar.";
+    this.action =
+      action || "Verifique as autorizações necessárias antes de continuar.";
     this.statusCode = 403;
   }
 

@@ -58,13 +58,13 @@ async function createUser(userInputValues) {
 }
 
 async function activateUser(userId) {
-  const activatedUser = await activation.activateUserByUserId(userId)
-  return activatedUser
+  const activatedUser = await activation.activateUserByUserId(userId);
+  return activatedUser;
 }
 
 async function addFeaturesToUser(userId, features) {
-  const updatedUser = await user.addFeatures(userId, features)
-  return updatedUser
+  const updatedUser = await user.addFeatures(userId, features);
+  return updatedUser;
 }
 
 async function createSession(userId) {
@@ -83,7 +83,7 @@ async function getLastEmail() {
   const lastEmail = emailListBody.pop();
 
   if (!lastEmail) {
-    return null
+    return null;
   }
 
   const lastEmailResponse = await fetch(
@@ -98,7 +98,7 @@ async function getLastEmail() {
 function extractUUID(text) {
   const match = text.match(/[0-9a-fA-F-]{36}/);
 
-  return match ? match[0] : null
+  return match ? match[0] : null;
 }
 
 const orchestrator = {

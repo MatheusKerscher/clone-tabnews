@@ -7,7 +7,7 @@ import authorization from "models/authorization";
 
 const router = createRouter();
 
-router.use(controller.injectAnonymousOrUser)
+router.use(controller.injectAnonymousOrUser);
 router.get(controller.canRequest("read:session"), getHandler);
 
 export default router.handler(controller.errorHandler);
@@ -22,8 +22,12 @@ async function getHandler(req, res) {
   controller.createSessionCookie(renewedSession.token, res);
   controller.disableCacheControl(res);
 
-  const userTryingToGet = req.context.user
-  const secureOutputValues = authorization.filterOutput(userTryingToGet, "read:user:self", userFound)
+  const userTryingToGet = req.context.user;
+  const secureOutputValues = authorization.filterOutput(
+    userTryingToGet,
+    "read:user:self",
+    userFound,
+  );
 
   res.status(200).json(secureOutputValues);
 }

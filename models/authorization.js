@@ -1,4 +1,4 @@
-import { InternalServerError } from "infra/errors"
+import { InternalServerError } from "infra/errors";
 
 const availableFeatures = [
   // USER
@@ -21,34 +21,34 @@ const availableFeatures = [
 
   //STATUS
   "read:status",
-  "read:status:all"
-]
+  "read:status:all",
+];
 
 function can(user, feature, resource) {
-  validateUser(user)
-  validateFeature(feature)
+  validateUser(user);
+  validateFeature(feature);
 
-  let authorized = false
+  let authorized = false;
 
   if (user.features.includes(feature)) {
-    authorized = true
+    authorized = true;
   }
 
   if (feature === "update:user" && resource) {
-    authorized = false
+    authorized = false;
 
     if (user.id === resource.id || can(user, "update:user:others", null)) {
-      authorized = true
+      authorized = true;
     }
   }
 
-  return authorized
+  return authorized;
 }
 
 function filterOutput(user, feature, resource) {
-  validateUser(user)
-  validateFeature(feature)
-  validateResource(resource)
+  validateUser(user);
+  validateFeature(feature);
+  validateResource(resource);
 
   if (feature === "read:user") {
     return {
@@ -56,8 +56,8 @@ function filterOutput(user, feature, resource) {
       username: resource.username,
       features: resource.features,
       created_at: resource.created_at,
-      updated_at: resource.updated_at
-    }
+      updated_at: resource.updated_at,
+    };
   }
 
   if (feature === "read:user:self") {
@@ -68,8 +68,8 @@ function filterOutput(user, feature, resource) {
         email: resource.email,
         features: resource.features,
         created_at: resource.created_at,
-        updated_at: resource.updated_at
-      }
+        updated_at: resource.updated_at,
+      };
     }
   }
 
@@ -81,8 +81,8 @@ function filterOutput(user, feature, resource) {
         user_id: resource.user_id,
         created_at: resource.created_at,
         updated_at: resource.updated_at,
-        expires_at: resource.expires_at
-      }
+        expires_at: resource.expires_at,
+      };
     }
   }
 
@@ -93,8 +93,8 @@ function filterOutput(user, feature, resource) {
       created_at: resource.created_at,
       updated_at: resource.updated_at,
       expires_at: resource.expires_at,
-      used_at: resource.used_at
-    }
+      used_at: resource.used_at,
+    };
   }
 
   if (feature === "read:migration") {
@@ -102,9 +102,9 @@ function filterOutput(user, feature, resource) {
       return {
         path: migration.path,
         name: migration.name,
-        timestamp: migration.timestamp
-      }
-    })
+        timestamp: migration.timestamp,
+      };
+    });
   }
 
   if (feature === "read:status") {
@@ -115,44 +115,45 @@ function filterOutput(user, feature, resource) {
           max_connections: resource.database.maxConnections,
           opened_connections: resource.database.openedConnections,
         },
-      }
-    }
+      },
+    };
 
     if (can(user, "read:status:all")) {
-      output.dependencies.database.version = resource.database.version
+      output.dependencies.database.version = resource.database.version;
     }
 
-    return output
+    return output;
   }
 }
 
 const authorization = {
   can,
-  filterOutput
-}
+  filterOutput,
+};
 
-export default authorization
+export default authorization;
 
 function validateUser(user) {
   if (!user || !user.features) {
     throw new InternalServerError({
-      cause: "É necessário informar um 'user' no model 'authorization'"
-    })
+      cause: "É necessário informar um 'user' no model 'authorization'",
+    });
   }
 }
 
 function validateFeature(feature) {
   if (!feature || !availableFeatures.includes(feature)) {
     throw new InternalServerError({
-      cause: "É necessário informar uma 'feature' no model 'authorization'"
-    })
+      cause: "É necessário informar uma 'feature' no model 'authorization'",
+    });
   }
 }
 
 function validateResource(resource) {
   if (!resource) {
     throw new InternalServerError({
-      cause: "É necessário informar um 'resource' no model 'authorization.filterOutput()'"
-    })
+      cause:
+        "É necessário informar um 'resource' no model 'authorization.filterOutput()'",
+    });
   }
 }

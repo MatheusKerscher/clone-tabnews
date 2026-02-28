@@ -1,17 +1,17 @@
-import database from "infra/database"
-import email from "infra/email"
-import { ForbiddenError, NotFoundError } from "infra/errors"
-import webserver from "infra/webserver"
-import user from "./user"
-import authorization from "./authorization"
+import database from "infra/database";
+import email from "infra/email";
+import { ForbiddenError, NotFoundError } from "infra/errors";
+import webserver from "infra/webserver";
+import user from "./user";
+import authorization from "./authorization";
 
-const EXPIRES_IN_MILLISECONDS = 60 * 15 * 1000 // 15 minutes
+const EXPIRES_IN_MILLISECONDS = 60 * 15 * 1000; // 15 minutes
 
 async function create(userId) {
-  const expiresAt = new Date(Date.now() + EXPIRES_IN_MILLISECONDS)
+  const expiresAt = new Date(Date.now() + EXPIRES_IN_MILLISECONDS);
 
-  const createdToken = await runInsertQuery(userId, expiresAt)
-  return createdToken
+  const createdToken = await runInsertQuery(userId, expiresAt);
+  return createdToken;
 
   async function runInsertQuery(userId, expiresAt) {
     const results = await database.query({
@@ -23,10 +23,10 @@ async function create(userId) {
         RETURNING
           *
       ;`,
-      values: [userId, expiresAt]
-    })
+      values: [userId, expiresAt],
+    });
 
-    return results.rows[0]
+    return results.rows[0];
   }
 }
 
@@ -53,7 +53,8 @@ async function findOneValidById(tokenId) {
 
     if (results.rowCount === 0) {
       throw new NotFoundError({
-        message: "O token de ativação utilizado não foi encontrado no sistema ou expirou.",
+        message:
+          "O token de ativação utilizado não foi encontrado no sistema ou expirou.",
         action: "Faça um novo cadastro.",
       });
     }
@@ -72,8 +73,8 @@ async function sendEmailToUser(user, activationToken) {
 ${webserver.origin}/cadastro/ativar${activationToken.id}
     
 Atenciosamente,
-Equipe Clone TabNews`
-  })
+Equipe Clone TabNews`,
+  });
 }
 
 async function markTokenAsUsed(validActivationToken) {
@@ -101,17 +102,21 @@ async function markTokenAsUsed(validActivationToken) {
 }
 
 async function activateUserByUserId(userId) {
-  const userToActive = await user.findOneById(userId)
+  const userToActive = await user.findOneById(userId);
 
   if (!authorization.can(userToActive, "read:activation_token")) {
     throw new ForbiddenError({
       message: "Você não pode mais utilizar tokens de ativação.",
-      action: "Entre em contato com o suporte."
-    })
+      action: "Entre em contato com o suporte.",
+    });
   }
 
-  const activatedUser = await user.setFeatures(userId, ["read:session", "create:session", "update:user"])
-  return activatedUser
+  const activatedUser = await user.setFeatures(userId, [
+    "read:session",
+    "create:session",
+    "update:user",
+  ]);
+  return activatedUser;
 }
 
 const activation = {
@@ -120,7 +125,7 @@ const activation = {
   findOneValidById,
   sendEmailToUser,
   markTokenAsUsed,
-  activateUserByUserId
-}
+  activateUserByUserId,
+};
 
-export default activation
+export default activation;

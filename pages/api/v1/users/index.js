@@ -7,7 +7,7 @@ import authorization from "models/authorization";
 
 const router = createRouter();
 
-router.use(controller.injectAnonymousOrUser)
+router.use(controller.injectAnonymousOrUser);
 router.post(controller.canRequest("create:user"), postHandler);
 
 export default router.handler(controller.errorHandler);
@@ -16,11 +16,15 @@ async function postHandler(req, res) {
   const userInputValues = req.body;
   const newUser = await user.create(userInputValues);
 
-  const activationToken = await activation.create(newUser.id)
-  await activation.sendEmailToUser(newUser, activationToken)
+  const activationToken = await activation.create(newUser.id);
+  await activation.sendEmailToUser(newUser, activationToken);
 
-  const userTryingToPost = req.context.user
-  const secureOutputValues = authorization.filterOutput(userTryingToPost, "read:user", newUser)
+  const userTryingToPost = req.context.user;
+  const secureOutputValues = authorization.filterOutput(
+    userTryingToPost,
+    "read:user",
+    newUser,
+  );
 
   res.status(201).json(secureOutputValues);
 }

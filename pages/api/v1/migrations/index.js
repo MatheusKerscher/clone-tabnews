@@ -6,26 +6,34 @@ import authorization from "models/authorization";
 
 const router = createRouter();
 
-router.use(controller.injectAnonymousOrUser)
+router.use(controller.injectAnonymousOrUser);
 router.get(controller.canRequest("read:migration"), getHandler);
 router.post(controller.canRequest("create:migration"), postHandler);
 
 export default router.handler(controller.errorHandler);
 
 async function getHandler(req, res) {
-  const userTryingToGet = req.context.user
+  const userTryingToGet = req.context.user;
   const pendingMigrations = await migrator.runPendingMigrations(true);
 
-  const secureOutputValues = authorization.filterOutput(userTryingToGet, "read:migration", pendingMigrations)
+  const secureOutputValues = authorization.filterOutput(
+    userTryingToGet,
+    "read:migration",
+    pendingMigrations,
+  );
 
   res.status(200).json(secureOutputValues);
 }
 
 async function postHandler(req, res) {
-  const userTryingToPost = req.context.user
+  const userTryingToPost = req.context.user;
   const migratedMigrations = await migrator.runPendingMigrations(false);
 
-  const secureOutputValues = authorization.filterOutput(userTryingToPost, "read:migration", migratedMigrations)
+  const secureOutputValues = authorization.filterOutput(
+    userTryingToPost,
+    "read:migration",
+    migratedMigrations,
+  );
 
   if (secureOutputValues.length) {
     return res.status(201).json(secureOutputValues);

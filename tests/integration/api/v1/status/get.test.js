@@ -25,15 +25,17 @@ describe("GET /api/v1/status", () => {
 
   describe("Default user", () => {
     test("Retrieving current system status", async () => {
-      const defaultUser = await orchestrator.createUser()
-      await orchestrator.activateUser(defaultUser.id)
-      const defaultUserSession = await orchestrator.createSession(defaultUser.id)
+      const defaultUser = await orchestrator.createUser();
+      await orchestrator.activateUser(defaultUser.id);
+      const defaultUserSession = await orchestrator.createSession(
+        defaultUser.id,
+      );
 
       const response = await fetch("http://localhost:3000/api/v1/status", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Cookie: `session_id=${defaultUserSession.token}`
+          Cookie: `session_id=${defaultUserSession.token}`,
         },
       });
       expect(response.status).toBe(200);
@@ -51,16 +53,20 @@ describe("GET /api/v1/status", () => {
 
   describe("Privileged user", () => {
     test("With 'read:status:all' retrieving current system status", async () => {
-      const privilegedUser = await orchestrator.createUser()
-      await orchestrator.activateUser(privilegedUser.id)
-      await orchestrator.addFeaturesToUser(privilegedUser.id, ["read:status:all"])
-      const privilegedUserSession = await orchestrator.createSession(privilegedUser.id)
+      const privilegedUser = await orchestrator.createUser();
+      await orchestrator.activateUser(privilegedUser.id);
+      await orchestrator.addFeaturesToUser(privilegedUser.id, [
+        "read:status:all",
+      ]);
+      const privilegedUserSession = await orchestrator.createSession(
+        privilegedUser.id,
+      );
 
       const response = await fetch("http://localhost:3000/api/v1/status", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Cookie: `session_id=${privilegedUserSession.token}`
+          Cookie: `session_id=${privilegedUserSession.token}`,
         },
       });
 

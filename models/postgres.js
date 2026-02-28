@@ -6,7 +6,7 @@ async function showDatabaseVersion() {
   return databaseVersion;
 
   async function runShowQuery() {
-    const results = await database.query("SHOW server_version;")
+    const results = await database.query("SHOW server_version;");
 
     return results.rows[0].server_version;
   }
@@ -18,7 +18,7 @@ async function showDatabaseMaxConnections() {
   return databaseMaxConnection;
 
   async function runShowQuery() {
-    const results = await database.query("SHOW max_connections;")
+    const results = await database.query("SHOW max_connections;");
 
     return results.rows[0].max_connections;
   }
@@ -35,7 +35,7 @@ async function countOpenedConnections() {
     const results = await database.query({
       text: "SELECT COUNT(*)::int AS opened_connections FROM pg_stat_activity WHERE datname = $1;",
       values: [databaseName],
-    })
+    });
 
     return results.rows[0].opened_connections;
   }
@@ -44,7 +44,7 @@ async function countOpenedConnections() {
 const postgres = {
   showDatabaseVersion,
   showDatabaseMaxConnections,
-  countOpenedConnections
+  countOpenedConnections,
 };
 
 export default postgres;

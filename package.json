@@ -12,6 +12,9 @@
     "url": "https://github.com/MatheusKerscher/clone-tabnews/issues"
   },
   "homepage": "https://github.com/MatheusKerscher/clone-tabnews#readme",
+  "engines": {
+    "node": "24"
+  },
   "scripts": {
     "dev": "node scripts/dev.js",
     "build": "next build",

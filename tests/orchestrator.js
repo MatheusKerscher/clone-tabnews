@@ -62,6 +62,11 @@ async function activateUser(userId) {
   return activatedUser
 }
 
+async function addFeaturesToUser(userId, features) {
+  const updatedUser = await user.addFeatures(userId, features)
+  return updatedUser
+}
+
 async function createSession(userId) {
   return session.create(userId);
 }
@@ -102,10 +107,11 @@ const orchestrator = {
   runPendingMigrations,
   createUser,
   activateUser,
+  addFeaturesToUser,
   createSession,
   deleteAllEmails,
   getLastEmail,
-  extractUUID
+  extractUUID,
 };
 
 export default orchestrator;

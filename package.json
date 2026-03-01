@@ -12,6 +12,9 @@
     "url": "https://github.com/MatheusKerscher/clone-tabnews/issues"
   },
   "homepage": "https://github.com/MatheusKerscher/clone-tabnews#readme",
+  "engines": {
+    "node": "24"
+  },
   "scripts": {
     "dev": "node scripts/dev.js",
     "build": "next build",
@@ -25,6 +28,7 @@
     "services:down": "docker compose -f infra/compose.yaml down",
     "migrations:create": "node-pg-migrate create -m infra/migrations",
     "migrations:up": "node-pg-migrate -m infra/migrations --envPath .env.development up",
+    "migrations:up:dry": "node-pg-migrate -m infra/migrations --envPath .env.development --dry-run up",
     "lint:eslint:check": "eslint .",
     "lint:prettier:check": "prettier --check .",
     "lint:prettier:fix": "prettier --write .",

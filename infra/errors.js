@@ -34,7 +34,7 @@ export class ServiceError extends Error {
     this.name = "ServiceError";
     this.action = action || "Verifique se o serviço está disponível.";
     this.statusCode = 503;
-    this.context = context
+    this.context = context;
   }
 
   toJSON() {
@@ -43,7 +43,7 @@ export class ServiceError extends Error {
       message: this.message,
       action: this.action,
       status_code: this.statusCode,
-      context: this.context
+      context: this.context,
     };
   }
 }
